@@ -35,6 +35,7 @@ func shuffleBytes(b *[]byte, numbers []uint16) {
 		(*b)[i], (*b)[j] = (*b)[j], (*b)[i]
 	}
 }
+
 func reverseShuffle(b *[]byte, numbers []uint16) {
 	for i := len(numbers) - 1; i >= 0; i-- {
 		j := numbers[i]
@@ -56,8 +57,6 @@ func Assemble(seed int64, bytes []byte) []byte {
 	r := rand.New(rand.NewSource(seed))
 	numbers := randNumbers(r, len(bytes))
 	reverseShuffle(&bytes, numbers)
-	//reverse(numbers)
-	//shuffleBytes(&bytes, numbers)
 	return bytes
 }
 
