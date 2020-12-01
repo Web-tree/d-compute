@@ -21,12 +21,12 @@ func SplitFile(file *os.File, options Options, callback func(chunk Chunk)) error
 
 func SplitBytes(bytes []byte, options Options, callback func(chunk Chunk)) error {
 	bytesLen := len(bytes)
-	chunkAmount := int(math.Max(float64(options.minChunks), math.Ceil(float64(bytesLen/maxChunkSize))))
+	chunkAmount := int(math.Max(float64(options.minChunks), math.Ceil(float64(bytesLen)/float64(maxChunkSize))))
 
 	r := rand.New(rand.NewSource(stringToInt64Hash(options.password)))
 	shuffleBytes(&bytes, randNumbers(r, bytesLen))
 	chunkSize := bytesLen / chunkAmount
-	for i := 0; i <= chunkAmount; i++ {
+	for i := 0; i < chunkAmount; i++ {
 		from := i * chunkSize
 		to := (i + 1) * chunkSize
 		chunk := Chunk{
