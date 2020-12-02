@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-const maxChunkSize int = 65535
+const maxChunkSize int = math.MaxUint16 //65535
 
 func SplitFile(file *os.File, options Options, callback func(chunk Chunk)) error {
 	stat, err := file.Stat()
