@@ -52,3 +52,6 @@ func TestSplitBytes_shouldCreateMultipleChunks(t *testing.T) {
 	})
 	assert.Len(t, chunks, 3)
 }
+
+func TestSplitBytes_shouldBeAbleToJoinChunks(t *testing.T) {
+}
