@@ -2,8 +2,11 @@ package keys
 
 import (
 	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha512"
 	"encoding/gob"
 	"github.com/libp2p/go-libp2p-core/crypto"
+	"github.com/syndtr/goleveldb/leveldb/errors"
 )
 
 type Service interface {
@@ -12,7 +15,8 @@ type Service interface {
 	GetExisting() (*KeyPair, error)
 	ResetKeys() error
 	AddPrivateKeyAsString(key string)
-	ConnectByInvitationLink(invitationLink string) error
+	EncodeWithPublicKey(content []byte, pub crypto.PubKey) ([]byte, error)
+	DecodeWithPrivateKey(content []byte, priv crypto.PrivKey) ([]byte, error)
 }
 
 func NewKeysService(config *Config) Service {
@@ -26,8 +30,48 @@ type service struct {
 	conf *Config
 }
 
-func (s *service) ConnectByInvitationLink(link string) error {
-	panic("implement me")
+func (s *service) DecodeWithPrivateKey(content []byte, priv crypto.PrivKey) ([]byte, error) {
+	stdPrivKey, err := crypto.PrivKeyToStdKey(priv)
+	if err != nil {
+		return nil, err
+	}
+
+	if key, ok := stdPrivKey.(*rsa.PrivateKey); ok {
+		return s.decryptWithRsaPrivateKey(content, key)
+	} else {
+		return nil, errors.New("RSA keys supported only")
+	}
+}
+
+func (s *service) EncodeWithPublicKey(content []byte, pub crypto.PubKey) ([]byte, error) {
+	rsaPubKey, err := crypto.PubKeyToStdKey(pub)
+	if err != nil {
+		return nil, err
+	}
+
+	if key, ok := rsaPubKey.(*rsa.PublicKey); ok {
+		return s.encryptWithRsaPublicKey(content, key)
+	} else {
+		return nil, errors.New("RSA keys supported only")
+	}
+}
+
+func (s *service) encryptWithRsaPublicKey(msg []byte, pub *rsa.PublicKey) ([]byte, error) {
+	hash := sha512.New()
+	ciphertext, err := rsa.EncryptOAEP(hash, rand.Reader, pub, msg, nil)
+	if err != nil {
+		return nil, err
+	}
+	return ciphertext, nil
+}
+
+func (s *service) decryptWithRsaPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) ([]byte, error) {
+	hash := sha512.New()
+	decrypted, err := rsa.DecryptOAEP(hash, rand.Reader, priv, ciphertext, nil)
+	if err != nil {
+		return nil, err
+	}
+	return decrypted, nil
 }
 
 func (s *service) AddPrivateKeyAsString(key string) {

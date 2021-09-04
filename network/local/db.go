@@ -18,6 +18,14 @@ type Db interface {
 
 var connections = make(map[string]Db)
 
+func DbPath() string {
+	return "./_localdb"
+}
+func newDb(dbPath string) Db {
+	return NewDb(&DbConfig{path: dbPath})
+}
+
+// Deprecated
 func NewDb(config *DbConfig) Db {
 	if db, exists := connections[config.path]; exists {
 		return db

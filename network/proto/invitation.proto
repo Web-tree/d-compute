@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package invitation;
+
+option go_package = "connectivity/invitation";
+
+message AcceptInvitation {
+  string InvitationId = 1;
+  string HostId = 2;
+  bytes PublicKey = 3;
+}
+

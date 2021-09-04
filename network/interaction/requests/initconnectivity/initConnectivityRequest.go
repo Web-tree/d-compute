@@ -14,7 +14,7 @@ func NewInitConnectivityRequest() *InitConnectivityRequest {
 	return &InitConnectivityRequest{
 		wg:             sync.WaitGroup{},
 		keysService:    keys.NewKeysService(keys.Conf()),
-		connectService: connectivity.GetConnectionService(connectivity.Conf()),
+		connectService: connectivity.Initialize(),
 	}
 }
 
@@ -57,14 +57,14 @@ func (i *InitConnectivityRequest) Run(u ui.Ui) {
 				return
 			}
 		}
-		raw, err := keyPair.PubKey.Raw()
+		pubKeyBytes, err := keyPair.PubKey.Bytes()
 		if err != nil {
 			i.handleError(u, err)
 			return
 		}
-		u.ShowMessage(fmt.Sprintf("Send your public key to your friend: %s", base64.StdEncoding.EncodeToString(raw)))
+		u.ShowMessage(fmt.Sprintf("Send your public key to your friend: %s", base64.StdEncoding.EncodeToString(pubKeyBytes)))
 		s := u.AskUserInput().String(ui.Request("Paste invitation string your friend send you"))
-		err = i.keysService.ConnectByInvitationLink(s)
+		err = i.connectService.ConnectByInvitationLink(s)
 		if err != nil {
 			i.handleError(u, err)
 			return

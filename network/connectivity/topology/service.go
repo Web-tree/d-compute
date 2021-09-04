@@ -3,7 +3,7 @@ package topology
 import (
 	"bytes"
 	"encoding/gob"
-	"github.com/onsi/gomega/matchers/support/goraph/node"
+	"github.com/Web-tree/d-compute/network/connectivity/wtnode"
 )
 
 func init() {
@@ -12,10 +12,10 @@ func init() {
 
 type Service interface {
 	GetTopology() (*Topology, error)
-	GetDirectConnections() []*node.Node
-	IsDirectConnectTo(node *node.Node) bool
-	HasConnectionTo(node *node.Node) bool
-	GetBestMatchNodes(min int, max int) []*node.Node
+	GetDirectConnections() []*wtnode.WebtreeNode
+	IsDirectConnectTo(node *wtnode.WebtreeNode) bool
+	HasConnectionTo(node *wtnode.WebtreeNode) bool
+	GetBestMatchNodes(min MinConnectedNodes, max MaxConnectedNodes) []*wtnode.WebtreeNode
 	SaveTopology(t *Topology) error
 }
 
@@ -45,19 +45,19 @@ func (s *service) SaveTopology(tp *Topology) error {
 	return nil
 }
 
-func (s *service) GetDirectConnections() []*node.Node {
+func (s *service) GetDirectConnections() []*wtnode.WebtreeNode {
 	panic("implement me")
 }
 
-func (s *service) IsDirectConnectTo(node *node.Node) bool {
+func (s *service) IsDirectConnectTo(node *wtnode.WebtreeNode) bool {
 	panic("implement me")
 }
 
-func (s *service) HasConnectionTo(node *node.Node) bool {
+func (s *service) HasConnectionTo(node *wtnode.WebtreeNode) bool {
 	panic("implement me")
 }
 
-func (s *service) GetBestMatchNodes(min int, max int) []*node.Node {
+func (s *service) GetBestMatchNodes(min MinConnectedNodes, max MaxConnectedNodes) []*wtnode.WebtreeNode {
 	panic("implement me")
 }
 func (s *service) GetTopology() (*Topology, error) {

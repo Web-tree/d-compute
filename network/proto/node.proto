@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package node;
+
+option go_package = "connectivity/wtnode";
+
+message WebtreeNode {
+  string Id = 1;
+  bytes PubKey = 2;
+  string ConnectionType = 3;
+  repeated bytes ConnectionAddresses = 4;
+
+  float Trust = 5;
+}

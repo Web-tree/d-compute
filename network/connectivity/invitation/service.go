@@ -1,15 +1,21 @@
 package invitation
 
 import (
-	"crypto/x509"
+	"bytes"
 	"encoding/base64"
+	"encoding/gob"
+	"github.com/google/uuid"
+	"github.com/libp2p/go-libp2p-core/crypto"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 )
 
 var AlreadyExistsError = errors.New("Invitation for this key already exists")
 
 type Service interface {
-	CreateNewInvitation(publicKey string) ([]byte, error)
+	CreateNewInvitation(publicKey string, addresses []multiaddr.Multiaddr) ([]byte, error)
+	DecodeInvitation(invitation string) (Invitation, error)
+	GetInvitationByPublicKey(key []byte) (Invitation, error)
 }
 
 func NewService(conf *config) Service {
@@ -26,12 +32,27 @@ type service struct {
 	keyPrefix []byte
 }
 
-func (s *service) CreateNewInvitation(publicKey string) ([]byte, error) {
+func (s *service) GetInvitationByPublicKey(key []byte) (Invitation, error) {
+	invitationKey := s.getInvitationKey(key)
+	invitationBytes, err := s.conf.db.Get(invitationKey)
+	if err != nil {
+		return nil, err
+	}
+	var inv Invitation
+	err = gob.NewDecoder(bytes.NewReader(invitationBytes)).Decode(&inv)
+	if err != nil {
+		return nil, err
+	}
+
+	return inv, nil
+}
+
+func (s *service) CreateNewInvitation(publicKey string, addresses []multiaddr.Multiaddr) ([]byte, error) {
 	key, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {
 		return nil, err
 	}
-	_, err = x509.ParsePKIXPublicKey(key)
+	pubKey, err := crypto.UnmarshalPublicKey([]byte(publicKey))
 	if err != nil {
 		return nil, err
 	}
@@ -45,23 +66,57 @@ func (s *service) CreateNewInvitation(publicKey string) ([]byte, error) {
 		return nil, AlreadyExistsError
 	}
 
-	addresses := s.conf.connectionService.Status().GetHostAddresses()
 	var stringAddresses []string
 	for _, address := range addresses {
 		stringAddresses = append(stringAddresses, address.String())
 	}
-	inv := &invitation{
-		NodeId:           s.conf.connectionService.Status().GetHostId(),
+	inv := &sendingInvitation{
+		invite:           invite{InviteId: uuid.NewString()},
 		ConnectAddresses: stringAddresses,
 	}
 
-	bytes, err := inv.toBytes()
+	b := bytes.Buffer{}
+	err = gob.NewEncoder(&b).Encode(inv)
 	if err != nil {
 		return nil, err
 	}
-	return bytes, nil
+	err = s.conf.db.Put(invitationKey, b.Bytes())
+	if err != nil {
+		return nil, err
+	}
+	return s.encryptInvitation(inv, pubKey)
+}
+
+func (s *service) DecodeInvitation(invStr string) (Invitation, error) {
+	keyPair, err := s.conf.keyService.GetExisting()
+	if err != nil {
+		return nil, err
+	}
+	invitation, err := s.decryptInvitation(invStr, keyPair.PrivKey)
+	if err != nil {
+		return nil, err
+	}
+	return invitation, nil
 }
 
 func (s *service) getInvitationKey(key []byte) []byte {
 	return append(s.keyPrefix, key...)
+}
+
+func (s *service) encryptInvitation(inv *sendingInvitation, key crypto.PubKey) ([]byte, error) {
+	b := &bytes.Buffer{}
+	err := gob.NewEncoder(b).Encode(inv)
+	if err != nil {
+		return nil, err
+	}
+	return s.conf.keyService.EncodeWithPublicKey(b.Bytes(), key)
+}
+
+func (s service) decryptInvitation(invStr string, privKey crypto.PrivKey) (inv *sendingInvitation, err error) {
+	decodedInvitation, err := s.conf.keyService.DecodeWithPrivateKey([]byte(invStr), privKey)
+	if err != nil {
+		return
+	}
+	err = gob.NewDecoder(bytes.NewReader(decodedInvitation)).Decode(inv)
+	return
 }

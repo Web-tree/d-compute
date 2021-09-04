@@ -1,6 +1,9 @@
 package runner
 
-import "sync"
+import (
+	"github.com/Web-tree/d-compute/network/connectivity"
+	"sync"
+)
 
 type Runner interface {
 	Run() error
@@ -8,14 +11,16 @@ type Runner interface {
 	Stop()
 }
 
-func NewRunner(config *Config) Runner {
-	return &runner{conf: config}
+func newRunner(connSvc connectivity.ConnectionService) Runner {
+	return &runner{
+		connectionService: connSvc,
+	}
 }
 
 type runner struct {
-	conf *Config
-	wg   sync.WaitGroup
-	err  error
+	connectionService connectivity.ConnectionService
+	wg                sync.WaitGroup
+	err               error
 }
 
 func (r *runner) WaitTillExit() error {
@@ -24,12 +29,12 @@ func (r *runner) WaitTillExit() error {
 }
 
 func (r *runner) Stop() {
-	r.err = r.conf.connectionService.Disconnect()
+	r.err = r.connectionService.Disconnect()
 	r.wg.Done()
 }
 
 func (r *runner) Run() error {
-	if err := r.conf.connectionService.Connect(); err != nil {
+	if err := r.connectionService.Connect(); err != nil {
 		return err
 	}
 	r.wg.Add(1)

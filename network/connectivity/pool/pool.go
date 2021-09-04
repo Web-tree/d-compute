@@ -1,12 +1,17 @@
 package pool
 
-import "github.com/onsi/gomega/matchers/support/goraph/node"
+import (
+	"github.com/Web-tree/d-compute/network/connectivity/wtnode"
+)
 
 type ConnectionPool interface {
-	ConnectToNodes(n []*node.Node)
+	ConnectToNodes(n []*wtnode.WebtreeNode)
 	OnDisconnect(func())
 }
 
+func newConnectionPool() ConnectionPool {
+	return &connectionPool{}
+}
 func NewConnectionPool(c *config) ConnectionPool {
 	return &connectionPool{
 		config: c,
@@ -21,6 +26,6 @@ func (c *connectionPool) OnDisconnect(f func()) {
 	panic("implement me")
 }
 
-func (c *connectionPool) ConnectToNodes(n []*node.Node) {
+func (c *connectionPool) ConnectToNodes(n []*wtnode.WebtreeNode) {
 	panic("implement me")
 }

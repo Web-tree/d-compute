@@ -12,7 +12,7 @@ type Config struct {
 
 func Conf() *Config {
 	return &Config{
-		connectionService: connectivity.GetConnectionService(connectivity.Conf()),
+		connectionService: connectivity.Initialize(),
 		invitationService: invitation.NewService(invitation.Conf()),
 	}
 }

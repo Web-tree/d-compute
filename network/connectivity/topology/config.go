@@ -8,6 +8,9 @@ type config struct {
 
 func Conf() *config {
 	return &config{
-		db: local.NewDb(local.DbConf()),
+		db: local.GetInstance(),
 	}
 }
+
+type MinConnectedNodes int
+type MaxConnectedNodes int

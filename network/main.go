@@ -14,7 +14,7 @@ func main() {
 	conf := interaction.Conf()
 	conf.UiConf.UiType = ui.UiCli
 	interaction.RunInterface(conf)
-	connectionService := connectivity.GetConnectionService(connectivity.Conf())
+	connectionService := connectivity.Initialize()
 
 	if !connectionService.IsRegistered() {
 		initConnectivityRequest := initconnectivity.NewInitConnectivityRequest()
@@ -25,7 +25,7 @@ func main() {
 		}
 	}
 
-	r := runner.NewRunner(runner.Conf())
+	r := runner.InitializeRunner()
 	err := r.Run()
 	if err != nil {
 		log.Panic(err)

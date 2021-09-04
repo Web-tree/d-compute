@@ -1,6 +1,8 @@
 package keys
 
 import (
+	"crypto/rand"
+	"github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -21,5 +23,16 @@ func TestKeysServiceTest(t *testing.T) {
 		exists, err := keysService.KeysExists()
 		assert.NoError(t, err)
 		assert.False(t, exists)
+	})
+
+	t.Run("Encode public, decode private", func(t *testing.T) {
+		privKey, pubKey, err := crypto.GenerateKeyPairWithReader(crypto.RSA, 2048, rand.Reader)
+		assert.NoError(t, err)
+		c := []byte("some content")
+		encoded, err := keysService.EncodeWithPublicKey(c, pubKey)
+		assert.NoError(t, err)
+		decoded, err := keysService.DecodeWithPrivateKey(encoded, privKey)
+		assert.NoError(t, err)
+		assert.Equal(t, c, decoded)
 	})
 }

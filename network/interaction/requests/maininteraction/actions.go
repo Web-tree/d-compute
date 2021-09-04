@@ -19,7 +19,7 @@ var (
 			callback: func(config *Config, u ui.Ui) {
 				for {
 					key := u.AskUserInput().String(ui.Request("Your friend had to send you a public key. Paste it here."))
-					invitation, err := config.invitationService.CreateNewInvitation(key)
+					invitation, err := config.invitationService.CreateNewInvitation(key, config.connectionService.Status().GetHostAddresses())
 					if err == nil {
 						u.ShowMessage("Invitation created. Send this invitation link to your friend.")
 						u.ShowMessage(base64.StdEncoding.EncodeToString(invitation))

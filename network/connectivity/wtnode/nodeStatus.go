@@ -1,4 +1,4 @@
-package node
+package wtnode
 
 type Status struct {
 }
