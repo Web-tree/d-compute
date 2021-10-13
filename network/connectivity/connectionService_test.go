@@ -25,7 +25,9 @@ func TestConnectivityService(t *testing.T) {
 			assert.True(t, exists)
 		})
 		t.Run("should have no connected hosts", func(t *testing.T) {
-			err := service.Run()
+			err := service.Stop()
+			assert.NoError(t, err)
+			err = service.Run()
 			assert.NoError(t, err)
 			status := service.Status()
 			assert.NotNil(t, status)
