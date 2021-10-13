@@ -247,9 +247,13 @@ func (c *connectionService) IsRegistered() bool {
 func (c *connectionService) addHandlers(host host.Host) {
 	host.SetStreamHandler(runner.AcceptInvitationHandlerPath, func(stream network.Stream) {
 		defer stream.Close()
-		stream.Conn().RemoteMultiaddr()
+		b, err := ioutil.ReadAll(stream)
+		if err != nil {
+			c.processHandlerError(stream, err)
+		}
+
 		var accept invitation.AcceptInvitation
-		err := io.Reader.ReadMsg(stream, &accept)
+		err = proto.Unmarshal(b, &accept)
 		if err != nil {
 			c.processHandlerError(stream, err)
 			return
@@ -277,6 +281,9 @@ func (c *connectionService) addHandlers(host host.Host) {
 	})
 }
 func (c connectionService) processHandlerError(stream network.Stream, err error) {
+	if e := stream.Reset(); e != nil {
+		log.Err(e)
+	}
 	_, err = stream.Write([]byte(err.Error()))
 	if err != nil {
 		log.Err(err).Send()
