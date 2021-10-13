@@ -31,6 +31,7 @@ type ConnectionService interface {
 	Connect() error
 	Status() *Status
 	Run() error
+	Stop() error
 	InitOwnNetwork() error
 	Disconnect() error
 	ConnectByInvitationLink(invitation string) error
@@ -83,6 +84,16 @@ type connectionService struct {
 	status            *Status
 	topologyService   topology.Service
 	watcher           connectionWatcher
+}
+
+func (c *connectionService) Stop() error {
+	h := c.status.Host
+	c.status = &Status{Run: false}
+	err := h.Close()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *connectionService) PutWtNode(n *wtnode.WebtreeNode) error {
