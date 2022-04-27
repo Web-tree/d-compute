@@ -3,12 +3,12 @@ package topology
 import "github.com/Web-tree/d-compute/network/local"
 
 type config struct {
-	db local.Db
+	Db local.Db
 }
 
 func Conf() *config {
 	return &config{
-		db: local.GetInstance(),
+		Db: local.GetInstance(),
 	}
 }
 

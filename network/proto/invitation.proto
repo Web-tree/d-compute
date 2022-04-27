@@ -9,4 +9,3 @@ message AcceptInvitation {
   string HostId = 2;
   bytes PublicKey = 3;
 }
-

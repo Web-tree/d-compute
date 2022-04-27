@@ -6,13 +6,13 @@ import (
 )
 
 type config struct {
-	db         local.Db
-	keyService keys.Service
+	Db         local.Db
+	KeyService keys.Service
 }
 
 func Conf() *config {
 	return &config{
-		db:         local.NewDb(local.DbConf()),
-		keyService: keys.NewKeysService(keys.Conf()),
+		Db:         local.NewDb(local.DbConf()),
+		KeyService: keys.NewKeysService(keys.Conf()),
 	}
 }

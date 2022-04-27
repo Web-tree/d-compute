@@ -38,7 +38,7 @@ func (s *service) SaveTopology(tp *Topology) error {
 	if err != nil {
 		return err
 	}
-	err = s.conf.db.Put(s.topologyKey, b.Bytes())
+	err = s.conf.Db.Put(s.topologyKey, b.Bytes())
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func (s *service) GetBestMatchNodes(min MinConnectedNodes, max MaxConnectedNodes
 	panic("implement me")
 }
 func (s *service) GetTopology() (*Topology, error) {
-	tpBytes, err := s.conf.db.Get(s.topologyKey)
+	tpBytes, err := s.conf.Db.Get(s.topologyKey)
 	if err != nil {
 		return nil, err
 	}

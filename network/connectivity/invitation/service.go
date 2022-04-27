@@ -34,7 +34,7 @@ type service struct {
 
 func (s *service) GetInvitationByPublicKey(key []byte) (Invitation, error) {
 	invitationKey := s.getInvitationKey(key)
-	invitationBytes, err := s.conf.db.Get(invitationKey)
+	invitationBytes, err := s.conf.Db.Get(invitationKey)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (s *service) CreateNewInvitation(publicKey string, addresses []multiaddr.Mu
 	}
 
 	invitationKey := s.getInvitationKey(key)
-	has, err := s.conf.db.Has(invitationKey)
+	has, err := s.conf.Db.Has(invitationKey)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (s *service) CreateNewInvitation(publicKey string, addresses []multiaddr.Mu
 	if err != nil {
 		return nil, err
 	}
-	err = s.conf.db.Put(invitationKey, b.Bytes())
+	err = s.conf.Db.Put(invitationKey, b.Bytes())
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (s *service) CreateNewInvitation(publicKey string, addresses []multiaddr.Mu
 }
 
 func (s *service) DecodeInvitation(invStr string) (Invitation, error) {
-	keyPair, err := s.conf.keyService.GetExisting()
+	keyPair, err := s.conf.KeyService.GetExisting()
 	if err != nil {
 		return nil, err
 	}
@@ -109,11 +109,11 @@ func (s *service) encryptInvitation(inv *sendingInvitation, key crypto.PubKey) (
 	if err != nil {
 		return nil, err
 	}
-	return s.conf.keyService.EncodeWithPublicKey(b.Bytes(), key)
+	return s.conf.KeyService.EncodeWithPublicKey(b.Bytes(), key)
 }
 
 func (s service) decryptInvitation(invStr string, privKey crypto.PrivKey) (inv *sendingInvitation, err error) {
-	decodedInvitation, err := s.conf.keyService.DecodeWithPrivateKey([]byte(invStr), privKey)
+	decodedInvitation, err := s.conf.KeyService.DecodeWithPrivateKey([]byte(invStr), privKey)
 	if err != nil {
 		return
 	}

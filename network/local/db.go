@@ -22,20 +22,20 @@ func DbPath() string {
 	return "./_localdb"
 }
 func newDb(dbPath string) Db {
-	return NewDb(&DbConfig{path: dbPath})
+	return NewDb(&DbConfig{Path: dbPath})
 }
 
 // Deprecated
 func NewDb(config *DbConfig) Db {
-	if db, exists := connections[config.path]; exists {
+	if db, exists := connections[config.Path]; exists {
 		return db
 	}
-	levelDb, err := leveldb.OpenFile(config.path, nil)
+	levelDb, err := leveldb.OpenFile(config.Path, nil)
 	if err == nil {
 		db := &dbImpl{
 			levelDb: levelDb,
 		}
-		connections[config.path] = db
+		connections[config.Path] = db
 		return db
 	} else {
 		panic(err)
@@ -43,12 +43,12 @@ func NewDb(config *DbConfig) Db {
 }
 
 type DbConfig struct {
-	path string
+	Path string
 }
 
 func DbConf() *DbConfig {
 	return &DbConfig{
-		path: "./_localdb",
+		Path: "./_localdb",
 	}
 }
 

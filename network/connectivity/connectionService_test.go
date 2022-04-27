@@ -1,7 +1,11 @@
 package connectivity
 
 import (
+	"github.com/Web-tree/d-compute/network/connectivity/invitation"
+	"github.com/Web-tree/d-compute/network/connectivity/pool"
+	"github.com/Web-tree/d-compute/network/connectivity/topology"
 	"github.com/Web-tree/d-compute/network/keys"
+	"github.com/Web-tree/d-compute/network/local"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -36,5 +40,27 @@ func TestConnectivityService(t *testing.T) {
 			assert.NotNil(t, status.Host)
 			assert.NotEmpty(t, status.GetHostId())
 		})
+	})
+
+	t.Run("Invitations", func(t *testing.T) {
+		inviter := Initialize()
+		assert.NoError(t, inviter.InitOwnNetwork())
+		dbConf := local.DbConf()
+		dbConf.Path = dbConf.Path + "-invitee"
+		db := local.NewDb(dbConf)
+		keysConf := keys.Conf()
+		keysConf.Db = db
+		invitationConf := invitation.Conf()
+		invitationConf.Db = db
+		topologyConf := topology.Conf()
+		topologyConf.Db = db
+		invitee := newConnectionService(
+			1, 1,
+			db,
+			pool.GetInstance(),
+			keys.NewKeysService(keysConf), invitation.NewService(invitationConf), topology.NewService(topologyConf),
+		)
+		print(invitee)
+
 	})
 }

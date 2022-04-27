@@ -79,11 +79,11 @@ func (s *service) AddPrivateKeyAsString(key string) {
 }
 
 func (s *service) ResetKeys() error {
-	return s.conf.db.Delete(s.conf.dbKey)
+	return s.conf.Db.Delete(s.conf.DbKey)
 }
 
 func (s *service) KeysExists() (bool, error) {
-	return s.conf.db.Has(s.conf.dbKey)
+	return s.conf.Db.Has(s.conf.DbKey)
 }
 
 func (s *service) GenerateNew() (*KeyPair, error) {
@@ -104,7 +104,7 @@ func (s *service) GenerateNew() (*KeyPair, error) {
 }
 
 func (s *service) GetExisting() (*KeyPair, error) {
-	b, err := s.conf.db.Get(s.conf.dbKey)
+	b, err := s.conf.Db.Get(s.conf.DbKey)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ func (s *service) persist(pair *KeyPair) error {
 	if err != nil {
 		return err
 	}
-	err = s.conf.db.Put(s.conf.dbKey, raw)
+	err = s.conf.Db.Put(s.conf.DbKey, raw)
 	if err != nil {
 		return err
 	}

@@ -3,14 +3,14 @@ package keys
 import "github.com/Web-tree/d-compute/network/local"
 
 type Config struct {
-	db    local.Db
-	dbKey []byte
+	Db    local.Db
+	DbKey []byte
 }
 
 func Conf() *Config {
 	return &Config{
-		db:    initDb(),
-		dbKey: []byte("cryptoKey"),
+		Db:    initDb(),
+		DbKey: []byte("cryptoKey"),
 	}
 }
 
