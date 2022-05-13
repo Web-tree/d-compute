@@ -6,8 +6,9 @@ TBD.
 # Clients
 
 ## Core
-Lang: Go.
+Lang: Go \
 Output: Go module
+
 Shared lib for other clients.
 Core client provides the main functionality and interfaces. It requires an implementations of a few interfaces from the end-client library for platform specific implemention.
 
@@ -23,14 +24,17 @@ class PersistentKeyValueStore {
 ```
 
 ### Browser 
-Lang: Go
+
+Lang: Go \
 Output: WASM, npm module
 
 
 ### PC
-Lang: Go
+
+Lang: Go \
 Output: binary
 
 ### Mobile
-Lang: JS(react native) or Dart(flutter)
+
+Lang: JS(react native) or Dart(flutter) \
 Output: IOS & APK application
