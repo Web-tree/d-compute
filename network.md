@@ -33,4 +33,4 @@ Output: binary
 
 ### Mobile
 Lang: JS(react native) or Dart(flutter)
-Output: 
+Output: IOS & APK application
