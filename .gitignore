@@ -1,0 +1,7 @@
+.idea/
+
+**/_localdb/**
+
+network/go/network
+
+**/node_modules

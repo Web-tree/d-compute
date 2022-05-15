@@ -1,0 +1,24 @@
+{
+  "name": "webtree-dcompute-js",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "vite"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@chainsafe/libp2p-noise": "^6.1.1",
+    "@libp2p/bootstrap": "^1.0.5",
+    "@libp2p/crypto": "^0.22.11",
+    "@libp2p/mplex": "^1.0.5",
+    "@libp2p/webrtc-star": "^1.0.9",
+    "@libp2p/websockets": "^1.0.8",
+    "libp2p": "^0.36.2"
+  },
+  "devDependencies": {
+    "vite": "^2.8.6"
+  }
+}
