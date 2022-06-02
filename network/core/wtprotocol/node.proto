@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package wtprotocol;
+
+message WtNode {
+  Peer peer = 1;
+}
+
+// We're using libp2p definitions to describe the peer
+message Peer {
+  // This is a libp2p peer ID, based on the multihash
+  // https://docs.libp2p.io/concepts/peer-id/
+  string id = 1;
+  // We're using https://docs.libp2p.io/reference/glossary/#multiaddr
+  repeated string multiaddresses = 2;
+
+}
+

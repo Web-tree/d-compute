@@ -60,6 +60,14 @@ func main() {
 		}
 	})
 
+	//h.SetStreamHandler("/webtree/connect-own-device/get-connection-info", func(s network.Stream) {
+	//
+	//})
+
+	h.SetStreamHandler("/webtree/connect-own-device/connect-to", func(s network.Stream) {
+
+	})
+
 	//target := ""
 	target := "QmPfG3a9A7sD7iP67DHbg5TK2NTzfVbV4h6gdiurNAgjmE"
 	relayAddr := "QmbJkYSiMFKPPLTLr9C5Jwoq3Z2k4CQSHwpFygVSzMibxJ"
