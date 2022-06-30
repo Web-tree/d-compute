@@ -4,13 +4,14 @@ import (
 	"github.com/libp2p/go-libp2p-core/network"
 )
 
-func NewConnectOwnDevice() *connectOwnDevice {
-	return &connectOwnDevice{}
+func NewConnectOwnDevice() connectOwnDevice {
+	return connectOwnDevice{}
 }
 
 var _ WebTreeProtocol = &connectOwnDevice{}
 
 type connectOwnDevice struct {
+	ConnectionStatus *ConnectionStatus
 }
 
 func (c *connectOwnDevice) BaseId() string {

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package wtprotocol;
 
-message ConnectionStatus{
+message ConnectionStatus {
   bool connected = 1;
   int32 connectedPeersAmount = 2;
 }
